@@ -1,4 +1,6 @@
-<#  Windows 11 QoL Tweaks #>
+param(
+    [string]$Option
+)
 
 function Show-Menu {
     Clear-Host
@@ -158,9 +160,8 @@ function Restore-Defaults {
     Write-Host "Restoring default registry values (not implemented yet)."
 }
 
-do {
-    Show-Menu
-    $choice = Read-Choice "Select an option: "
+function Run-Choice {
+    param([string]$choice)
 
     switch ($choice) {
         "1" { Apply-All-Tweaks }
@@ -168,13 +169,26 @@ do {
         "3" { Apply-Privacy-Tweaks }
         "4" { Apply-Performance-Tweaks }
         "5" { Restore-Defaults }
-        "0" { Write-Host "`nExiting..."; break }
-        default { Write-Host "`nInvalid choice. Try again.`n" }
+        "0" { Write-Host "`nExiting..." }
+        default { Write-Host "`nInvalid choice. Exiting..." }
     }
+}
+
+if ($Option) {
+    # run speicifed choice and exit if supplied
+    Run-Choice $Option
+    exit
+}
+
+# menu loop
+do {
+    Show-Menu
+    $choice = Read-Choice "Select an option: "
+    Run-Choice $choice
 
     if ($choice -ne "0") {
-        Write-Host "`nPress Enter to return to menu..."
-        Read-Host
+        Write-Host "`nPress any key to return to menu..."
+        [void][System.Console]::ReadKey($true)
     }
 
 } until ($choice -eq "0")
